@@ -1,0 +1,201 @@
+<?php require('template/header.phtml');?>
+<script>
+    const user = "<?php echo $userName;?>";
+    let id = 0;
+    let date = null;
+    profile();
+    posts();
+    follow();
+    countFollowers();
+    function profile() {
+        fetch('Models/Scripts/profile.php?q=' + "<?php echo $_SESSION['ajaxToken'];?>" + "/" + user).then(function (response) {
+            return response.text();
+        }).then(function (data) {
+            const myObj = JSON.parse(data);
+            myObj.forEach(profileInfo);
+        }).catch(function (error) {
+            console.log('Error: ' + error);
+        });
+    }
+    function follow() {
+        fetch('Models/Scripts/follow.php?q=' + "<?php echo $_SESSION['ajaxToken'];?>" + "/" + user).then(function (response) {
+            return response.text();
+        }).then(function (data) {
+            const element = document.getElementById("follow");
+            element.innerHTML = '';
+            if(data === "true"){
+                followers("Follow each other", 'follow');
+            }
+        }).catch(function (error) {
+            console.log('Error: ' + error);
+        });
+    }
+    function followers(text, id){
+        const node = document.createTextNode(text);
+        show(node, 'p', id);
+    }
+    function countFollowers() {
+        fetch('Models/Scripts/countFollowers.php?q=' + "<?php echo $_SESSION['ajaxToken'];?>" + "/" + user).then(function (response) {
+            return response.text();
+        }).then(function (data) {
+           // const element = document.getElementById("countFollowers");
+           // element.innerHTML = '';
+            const myObj = JSON.parse(data);
+            console.log(myObj);
+            //followers();
+        }).catch(function (error) {
+            console.log('Error: ' + error);
+        });
+    }
+    function posts() {
+        fetch('Models/Scripts/profilePosts.php?q=' + "<?php echo $_SESSION['ajaxToken'];?>" + "/" + date + "/" + user).then(function (response) {
+            return response.text();
+        }).then(function (data) {
+            const myObj = JSON.parse(data);
+            console.log(myObj);
+            myObj.forEach(post);
+        }).catch(function (error) {
+            console.log('Error: ' + error);
+        });
+    }
+    function profileInfo(item) {
+        let node = document.createTextNode(item.userName);
+        show(node, 'h1', 'profileName');
+        if(item.bio != null){
+            node = document.createTextNode(item.bio);
+            show(node, 'p', 'bio');
+        }
+        if(item.profilePicture != null){
+            image("/Images/" + item.profilePicture);
+        }
+        if(item.profilePicture == null){
+            image("/Images/" + "blankProfilePicture.png");
+        }
+    }
+    function post(item) {
+        create(id);
+        var node = document.createTextNode(item.postHeader);
+        print(node, 'h3', item.postID, 'post');
+        node = document.createTextNode(item.postText);
+        print(node, 'tr', null, null);
+        node = document.createTextNode(item.postDate);
+        print(node, 'tr', null, null);
+        date = item.postDate;
+        id ++;
+    }
+    function create(id){
+        para = document.createElement("div");
+        para.className = "grid-items";
+        para.id = 'post' + id.valueOf();
+        element = document.getElementById('grid-container');
+        element.appendChild(para);
+    }
+    function print(node, tag, link, page) {
+        para = document.createElement(tag);
+        para.appendChild(node);
+        if (node.valueOf() == " "){
+            element = document.getElementById('grid-container');
+        }
+        else {
+            element = document.getElementById('post' + id.valueOf());
+        }
+        if(page != null) {
+            const a = document.createElement('a');
+            a.appendChild(para);
+            if(page == 'post') {
+                a.href = "/selectedPost.php?postID=" + link;
+            }
+            else if(page == 'profile'){
+                a.href = "/profile.php?user=" + link;
+            }
+            element.appendChild(a);
+        }
+        else {
+            element.appendChild(para);
+        }
+    }
+    function image(src) {
+        const img = document.createElement('img');
+        img.src =src;
+        document.getElementById('profilePicture').appendChild(img);
+    }
+    function show(node, tag, div) {
+        para = document.createElement(tag);
+        para.appendChild(node);
+        element = document.getElementById(div);
+        element.appendChild(para);
+    }
+    <?php
+    if(isset($_SESSION['userName']) && $userName != $_SESSION['userName'])
+    {?>
+    isFollowing();
+    function isFollowing() {
+        fetch('/Models/Scripts/getFollow.php?q=' + user).then(function (response) {
+            return response.text();
+        }).then(function (data) {
+            const element = document.getElementById("buttonPlacement");
+            element.innerHTML = '';
+            if(data == "false"){
+                followBtn("Follow","btn btn-primary");
+            }
+            else if(data == "true"){
+                followBtn("Following","btn btn-success");
+            }
+            follow();
+        }).catch(function (error) {
+            console.log('Error: ' + error);
+        });
+    }
+    function setFollow() {
+        fetch('/Models/Scripts/setFollow.php?q=' + user).then(function (response) {
+            return response.text();
+        }).then(function () {
+            isFollowing();
+        }).catch(function (error) {
+            console.log('Error: ' + error);
+        });
+    }
+    function followBtn(btnName, btnClass){
+        const btn = document.createElement("button");
+        btn.innerHTML = btnName;
+        btn.id = "follow";
+        btn.className = btnClass;
+        const element = document.getElementById("buttonPlacement");
+        console.log(btn);
+        element.appendChild(btn);
+    }
+    <?php }?>
+</script>
+<div class="profile" id="profileName">
+
+</div>
+
+<div id="bio">
+
+</div>
+<div id="profilePicture">
+
+</div>
+<?php if (isset($_SESSION['userName']) && $userName != $_SESSION['userName']) {
+    ?>
+        <div id ="follow"></div>
+<div id="buttonPlacement"></div>
+    <?php }?>
+<!--<div class="followers">
+    <p>Followers</p>
+    <div id="followers">
+
+    </div>
+</div>-->
+<div id="grid-container">
+
+</div>
+<script>document.addEventListener('click',function(event){
+        if(event.target && event.target.id== 'follow'){
+            setFollow();
+        }
+        else if(event.target && event.target.id== 'load'){
+            LoadMore()
+        }
+    });</script>
+<?php require('template/footer.phtml');?>

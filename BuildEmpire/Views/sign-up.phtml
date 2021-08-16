@@ -1,0 +1,64 @@
+<?php require('template/header.phtml');?>
+    <script>
+        function signUp() {
+                fetch('Models/Scripts/sign-up.php?q=' + "<?php echo $_SESSION['ajaxToken'];?>" + "ʌ" + document.getElementById("name").value + "ʌ" + document.getElementById("username").value + "ʌ" + document.getElementById("email").value + "ʌ" + document.getElementById("phone").value + "ʌ" + document.getElementById("DOB").value + "ʌ" + document.getElementById("password").value).then(function (response) {
+                    return response.text();
+                }).then(function (data) {
+                    const myObj = JSON.parse(data);
+                    myObj.forEach(myFunction);
+                    if (myObj[0] === "error") {
+                        response(myObj[1]);
+                    }
+                    if (myObj[0] === "success") {
+                        window.location.replace("/index.php");
+                    }
+                }).catch(function (error) {
+                    console.log('Error: ' + error);
+                });
+        }
+        function response(message){
+            const id = "error";
+            document.getElementById(id).innerHTML = '';
+            var tag = document.createElement("p");
+            var text = document.createTextNode(message);
+            tag.appendChild(text);
+            var element = document.getElementById(id);
+            element.appendChild(tag);
+        }
+    </script>
+    <form>
+        <div id="error"></div>
+        <div class="small">
+            <label class="boxes">Name</label>
+            <input id="name" required="required" class="form-control boxes" type="text" placeholder="name" value="">
+        </div>
+        <div class="small">
+            <label class="boxes">userName</label>
+            <input id="username" required="required" class="form-control boxes" type="text" placeholder="username" value="">
+        </div>
+        <div class="small">
+            <label class="boxes">password</label>
+            <input id="password" required="required" class="form-control boxes" type="password" placeholder="password" value="">
+        </div>
+        <div id="userMessage" class="boxes"></div>
+        <div class="small">
+            <label class="boxes">E-mail</label>
+            <input id="email" required="required" class="form-control boxes" type="email" placeholder="example@example.com" value="">
+        </div>
+        <div id="emailMessage" class="boxes"></div>
+        <div class="small">
+            <label class="boxes">Phone Number</label>
+            <input id="phone" required="required" class="form-control boxes" type="text" placeholder="07123456789" value="">
+        </div>
+        <div id="phoneMessage" class="boxes"></div>
+        <div class="small">
+            <label class="boxes">Date Of Birth</label>
+            <input id="DOB" required="required" class="form-control boxes" type="date" placeholder="Date Of Birth" value="">
+        </div>
+        <p></p>
+        <button type="button" id="Button" class="btn btn-success glyphicon glyphicon-ok"></button>
+    </form>
+    <script>
+        document.getElementById('Button').addEventListener('click', signUp, false);
+    </script>
+<?php require('template/footer.phtml');?>

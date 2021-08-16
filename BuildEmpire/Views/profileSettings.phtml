@@ -1,0 +1,137 @@
+<?php require('template/header.phtml');?>
+<script>
+    function updateUser(table, update) {
+        if(table !== null || update !== null) {
+            fetch('Models/Scripts/updateUser.php?q=' + "<?php echo $_SESSION['ajaxToken'];?>" + "ʌ" + table + "ʌ" + update).then(function (response) {
+                return response.text();
+            }).then(function (data) {
+                const myObj = JSON.parse(data);
+                console.log(myObj[0]);
+               if (myObj[1].valueOf() === "refresh") {
+                    location.reload();
+                }
+               if (myObj[0].valueOf() === "delete") {
+                   window.location.replace("/logOut.php");
+                }
+                else{
+                    response(myObj[1], table, myObj[2]);
+                }
+            }).catch(function (error) {
+                console.log('Error: ' + error);
+            });
+        }
+    }
+    function response(message, id, pClass){
+        document.getElementById(id).innerHTML = '';
+        var tag = document.createElement("p");
+        tag.className = pClass;
+        var text = document.createTextNode(message);
+        tag.appendChild(text);
+        var element = document.getElementById(id);
+        element.appendChild(tag);
+    }
+    function updateImage(){
+        const inpFile = document.getElementById("File");
+        const endpoint = "/Models/Scripts/Image.php";
+        const formData = new FormData();
+        formData.append("image", inpFile.files[0]);
+        fetch(endpoint, {
+            method: "post",
+            body: formData
+        }).catch(console.error);
+    }
+</script>
+    <form>
+        <div class="small">
+            <label class="boxes">Name</label>
+            <input id="username" required="required" class="form-control boxes" type="text" placeholder="username" value="">
+            <button type="button" id="usernameButton" class="btn btn-success glyphicon glyphicon-ok"></button>
+        </div>
+        <div id="userMessage" class="boxes"></div>
+        <div class="small">
+            <label class="boxes">E-mail</label>
+            <input id="email" required="required" class="form-control boxes" type="email" placeholder="example@example.com" value="">
+            <button type="button" id="EmailButton" class="btn btn-success glyphicon glyphicon-ok"></button>
+        </div>
+        <div id="emailMessage" class="boxes"></div>
+        <div class="small">
+            <label class="boxes">Phone Number</label>
+            <input id="phone" required="required" class="form-control boxes" type="text" placeholder="07123456789" value="">
+            <button type="button" id="phoneButton" class="btn btn-success glyphicon glyphicon-ok"></button>
+        </div>
+        <div id="phoneMessage" class="boxes"></div>
+        <div class="small">
+            <label class="boxes">Date Of Birth</label>
+            <input id="DOB" required="required" class="form-control boxes" type="date" placeholder="Date Of Birth" value="">
+            <button type="button" id="DateOfBirthButton" class="btn btn-success glyphicon glyphicon-ok"></button>
+        </div>
+        <div id="DOBMessage" class="boxes"></div>
+        <div class="small">
+            <label class="boxes">Bio</label>
+            <textarea id="Bio" required="required" class="form-control boxes" type="text" placeholder="Bio" value=""></textarea>
+            <button type="button" id="BioButton" class="btn btn-success glyphicon glyphicon-ok"></button>
+        </div>
+        <div id="bioMessage" class="boxes"></div>
+        <p></p>
+        <label>Update profile picture</label>
+        <div class="small">
+            <input type="file" id="File" name="filename">
+            <button type="button" id="imageButton" class="btn btn-success glyphicon glyphicon-ok"></button>
+        </div>
+        <p></p>
+        <div class="small">
+            <label>Remove Profile Picture</label>
+            <button type="button" id="deleteProfilePicture" class="btn btn-danger glyphicon glyphicon-remove-sign"></button>
+        </div>
+        <button type="button" class="collapsible">Delete Profile</button>
+        <div class="content">
+            <p></p>
+            <div class="form-group">
+                <p>This will delete your profile, press the red delete button if you are sure you wish to do this, there is NO coming back.</p>
+            </div>
+            <input type="button" class="btn-sm btn-danger btn-block" value="Delete" id="delete">
+
+        </div>
+    </form>
+    <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
+        document.addEventListener('click',function(event){
+            if(event.target && event.target.id == 'usernameButton'){
+                updateUser("userMessage", document.getElementById("username").value);
+            }
+            if(event.target && event.target.id == 'EmailButton'){
+                updateUser("emailMessage", document.getElementById("email").value);
+            }
+            if(event.target && event.target.id == 'phoneButton'){
+                updateUser("phoneMessage", document.getElementById("phone").value);
+            }
+            if(event.target && event.target.id == 'DateOfBirthButton'){
+                updateUser("DOBMessage", document.getElementById("DOB").value);
+            }
+            if(event.target && event.target.id== 'BioButton'){
+                updateUser("bioMessage", document.getElementById("Bio").value);
+            }
+            if(event.target && event.target.id == 'imageButton'){
+                updateImage();
+            }
+            if(event.target && event.target.id == 'deleteProfilePicture'){
+                updateUser('deleteProfilePicture', null);
+            }
+            if(event.target && event.target.id == 'delete'){
+                updateUser('delete', null);
+            }
+        });
+    </script>
+<?php require('template/footer.phtml');?>

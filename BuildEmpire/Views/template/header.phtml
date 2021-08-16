@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <?php if(!$has_session = session_status() == PHP_SESSION_ACTIVE)
+    {
+        session_start();
+    }
+    if(!isset($_SESSION["ajaxToken"])){
+        $_SESSION["ajaxToken"] = substr(str_shuffle(MD5(microtime())),0,20);
+        $_SESSION['ajaxTokenTime'] = time();
+    }
+    if(time() - $_SESSION['ajaxTokenTime'] >= 600);{
+        $_SESSION['ajaxTokenTime'] = time();
+    }
+    ?>
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="/css/bootstrap-theme.css" rel="stylesheet">
+    <!--custom CSS theme -->
+    <link href="/css/my-style.css" rel="stylesheet">
+    <title>Forum - <?php echo $view->pageTitle; ?></title>
+</head>
+<body>
+<h1>Forum</h1>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+
+        <ul class="nav navbar-nav">
+            <li><a href="../../index.php">Home</a></li>
+        </li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+            <?php
+            if(isset($_SESSION['userName']))
+            {?>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <?php echo $_SESSION['userName'];?>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="/profile.php?user=<?php echo $_SESSION['userName'];?>">Profile</a>
+                        <a class="dropdown-item" href="/profileSettings.php">Settings</a>
+                        <a href="../../logOut.php" class="glyphicon glyphicon-log-out red"> Sign out</a>
+                    </div>
+                </li>
+            <?php }
+            else
+            {?>
+                <li><a href="../../sign-up.php"><span class="glyphicon glyphicon-user green"></span> Sign Up</a></li>
+                <li><a href="/sign-in.php"><span class="glyphicon glyphicon-log-in green"></span> Login</a></li>
+            <?php } ?>
+        </ul>
+    </div>
+</nav>
+<div id="content">

@@ -1,0 +1,139 @@
+body {
+    background-color: #4E4E4E;
+    text-align: center;         /* make sure IE centers the page too */
+}
+.green{
+    color: #00ff00;
+}
+.red {
+    color: #FF0000;
+}
+.yellow{
+    color: #FFFF33;
+}
+#wrapper {
+    width: 900px;
+    margin: 0 auto;             /* center the page */
+}
+.collapsible {
+    background-color: #777;
+    color: white;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
+
+.active, .collapsible:hover {
+    background-color: #555;
+}
+
+.content {
+    margin-top: 0px;
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f1f1f1;
+}
+#content {
+    background-color: #fff;
+
+    float: left;
+    font-family: Arial;
+    padding: 20px 30px;
+    text-align: left;
+    width: 100%;                /* fill up the entire div */
+}
+#content h1{
+    color: black;
+}
+@media (min-width: 979px) {
+    ul.nav li.dropdown:hover > ul.dropdown-menu {
+        display: block;
+    }
+}
+#footer {
+    clear: both;
+}
+
+
+h1, #footer {
+    font-family: Arial;
+    color: #F1F3F1;
+}
+
+h3 {margin: 0; padding: 0;}
+
+/* Menu styles */
+
+.navbar{
+    margin-bottom: 0;
+}
+
+#footer {
+    margin_top: 20px;
+    text-align: center;
+    background-color: #000;
+    color: #fff;
+}
+.open-button {
+    background-color: #555;
+    color: white;
+    padding: 16px 20px;
+    border: none;
+    cursor: pointer;
+    opacity: 0.8;
+    position: fixed;
+    bottom: 23px;
+    right: 28px;
+    width: 280px;
+}
+img{
+    width: 300px;
+    height: 300px;
+    border-radius: 75px;
+}
+.small{
+    padding-top: 30px;
+    display: grid;
+    grid-template-columns: 70% 5% 25%;
+}
+.boxes{
+    grid-column: 1/2;
+}
+.small button{
+    grid-column: 3/3;
+    width: 20%;
+    height: 30px;
+}
+.error{
+    width: 70%;
+    padding: 10px;
+    background-color: #8B0000;
+    color: #FF0000;
+}
+.success{
+    width: 70%;
+    padding: 10px;
+    background-color: #006400;
+    color: #00FF00;
+}
+#grid-container {
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    padding: 10px;
+}
+.grid-items{
+    border-radius: 10px;
+    border-style: solid;
+    padding-left: 10px;
+    margin: 10px;
+}
+#Load{
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+}

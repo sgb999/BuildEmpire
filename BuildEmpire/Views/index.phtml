@@ -1,0 +1,69 @@
+<?php require('template/header.phtml')?>
+<script>
+    let date = null;
+    let id= 0;
+    posts();
+    function posts() {
+        const token = "<?php echo $_SESSION['ajaxToken']?>";
+        fetch('/Models/Scripts/post.php?q=' + token + "/" + date).then(function (response) {
+            return response.text();
+        }).then(function (data) {
+            const myObj = JSON.parse(data);
+            myObj.forEach(myFunction);
+        }).catch(function (error) {
+            console.log('Error: ' + error);
+        });
+    }
+    function myFunction(item) {
+        create(id);
+        var node = document.createTextNode(item.postHeader);
+        print(node, 'h3', item.postID, 'post');
+        node = document.createTextNode(item.postDate);
+        print(node, 'tr', null, null);
+        date = item.postDate;
+        node = document.createTextNode(item.userName);
+        print(node, 'tr', item.userName, 'profile');
+        node = document.createTextNode(" ");
+        print(node, 'p', null, null);
+        id ++;
+    }
+    function create(id){
+        para = document.createElement("div");
+        para.className = "grid-items";
+        para.id = 'post' + id.valueOf();
+        element = document.getElementById('grid-container');
+        element.appendChild(para);
+    }
+    function print(node, tag, link, page) {
+        para = document.createElement(tag);
+        para.appendChild(node);
+        if (node.valueOf() == " "){
+            element = document.getElementById('grid-container');
+        }
+        else {
+            element = document.getElementById('post' + id.valueOf());
+        }
+        if(page != null) {
+            const a = document.createElement('a');
+            a.appendChild(para);
+            if(page == 'post') {
+                a.href = "/selectedPost.php?postID=" + link;
+            }
+            else if(page == 'profile'){
+                a.href = "/profile.php?user=" + link;
+            }
+            element.appendChild(a);
+        }
+        else {
+            element.appendChild(para);
+        }
+    }
+</script>
+<div id="grid-container">
+
+</div>
+    <button id="Load" class="btn btn-primary  btn-lg">Load More</button>
+    <script>
+        document.getElementById('Load').addEventListener('click', posts, false);
+    </script>
+<?php require('template/footer.phtml')?>

@@ -1,0 +1,38 @@
+<?php require('template/header.phtml')?>
+    <script>
+        posts();
+        function posts() {
+            const token = "<?php echo $_SESSION['ajaxToken']?>";
+            fetch('/Models/Scripts/selectPost.php?q=' + token + "/" + "<?php echo $postID;?>").then(function (response) {
+                return response.text();
+            }).then(function (data) {
+                const myObj = JSON.parse(data);
+                myObj.forEach(myFunction);
+            }).catch(function (error) {
+                console.log('Error: ' + error);
+            });
+        }
+        function myFunction(item) {
+            let node = document.createTextNode(item.postHeader);
+            print(node, 'h3');
+            node = document.createTextNode(item.postText);
+            print(node, 'tr');
+            node = document.createTextNode(item.postDate);
+            print(node, 'tr');
+            date = item.postDate;
+            node = document.createTextNode(item.userName);
+            print(node, 'tr', item.userName);
+            node = document.createTextNode(" ");
+            print(node, 'p');
+        }
+        function print(node, tag) {
+            para = document.createElement(tag);
+            para.appendChild(node);
+            element = document.getElementById("post");
+            element.appendChild(para);
+        }
+    </script>
+    <div id="post">
+
+    </div>
+<?php require('template/footer.phtml')?>
